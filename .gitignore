@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+
+# Electron Packaged Builds
+SandyControl-win32-x64/
+dist/
+out/
+
+# OS & Logs
+.DS_Store
+Thumbs.db
+npm-debug.log*

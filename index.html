@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SANDY CONTROL CENTER</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-card: #0f0f18;
+            --bg-card-hover: #13131e;
+            --border: rgba(255,255,255,0.06);
+            --border-glow: rgba(100, 180, 255, 0.15);
+            --accent-1: #4fc3f7;   /* ice blue for LEDBLE */
+            --accent-2: #e040fb;   /* violet for BJ_LED */
+            --accent-all: #f9a825; /* gold for ALL */
+            --text-primary: #e8eaf6;
+            --text-muted: rgba(232, 234, 246, 0.35);
+            --success: #69f0ae;
+            --danger: #ff5252;
+            --music: #f06292;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg-deep);
+            overflow: hidden;
+            -webkit-user-select: none;
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--text-primary);
+            border: 1px solid rgba(255,255,255,0.08);
+            height: 100vh;
+        }
+
+        /* Atmospheric background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -60px; left: -60px;
+            width: 260px; height: 260px;
+            background: radial-gradient(circle, rgba(79, 195, 247, 0.06) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -60px; right: -60px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(224, 64, 251, 0.06) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+
+        /* ── HEADER ── */
+        .header-bar {
+            -webkit-app-region: drag;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            height: 44px;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid var(--border);
+            position: relative; z-index: 10;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent-1);
+            box-shadow: 0 0 8px var(--accent-1);
+            animation: breathe 2.5s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.3); }
+        }
+
+        .app-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 400;
+            color: var(--text-muted);
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+        }
+
+        .btn-close-custom {
+            -webkit-app-region: no-drag;
+            background: none;
+            border: none;
+            width: 26px; height: 26px;
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-close-custom:hover {
+            background: rgba(255, 82, 82, 0.15);
+            color: var(--danger);
+        }
+
+        /* ── MAIN CONTENT ── */
+        .main-content {
+            padding: 14px;
+            height: calc(100vh - 44px);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative; z-index: 1;
+            overflow: hidden;
+        }
+
+        /* ── ALL CONTROL BAR ── */
+        .all-control-bar {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-all {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 9px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(249, 168, 37, 0.2);
+            background: rgba(249, 168, 37, 0.05);
+            color: var(--accent-all);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-all:hover {
+            background: rgba(249, 168, 37, 0.12);
+            border-color: rgba(249, 168, 37, 0.4);
+            transform: translateY(-1px);
+        }
+        .btn-all.all-off {
+            border-color: rgba(255, 82, 82, 0.2);
+            background: rgba(255, 82, 82, 0.05);
+            color: var(--danger);
+        }
+        .btn-all.all-off:hover {
+            background: rgba(255, 82, 82, 0.12);
+            border-color: rgba(255, 82, 82, 0.4);
+        }
+
+        .btn-all-icon {
+            width: 16px; height: 16px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* ── DEVICE CARDS ── */
+        .devices-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .device-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: border-color 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .device-card.card-1 { --card-accent: var(--accent-1); }
+        .device-card.card-2 { --card-accent: var(--accent-2); }
+
+        .device-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--card-accent), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .device-card.connected-card::before { opacity: 1; }
+        .device-card.connected-card { border-color: rgba(var(--card-accent-rgb), 0.15); }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .device-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        .card-1 .device-name { color: var(--accent-1); }
+        .card-2 .device-name { color: var(--accent-2); }
+
+        .device-sub {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            margin-top: 2px;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            font-size: 9px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        .status-dot-inner {
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: #444;
+            transition: all 0.3s;
+        }
+        .status-pill.connected {
+            background: rgba(105, 240, 174, 0.08);
+            border-color: rgba(105, 240, 174, 0.2);
+            color: var(--success);
+        }
+        .status-pill.connected .status-dot-inner {
+            background: var(--success);
+            box-shadow: 0 0 6px var(--success);
+        }
+
+        /* ── CONNECT BUTTON ── */
+        .btn-connect {
+            width: 100%;
+            padding: 7px;
+            border-radius: 8px;
+            border: 1px dashed rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-muted);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-connect:hover {
+            border-style: solid;
+            background: rgba(255,255,255,0.06);
+            color: var(--text-primary);
+        }
+
+        /* ── CONTROLS WRAPPER ── */
+        .ctrl-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            opacity: 0.3;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+        .ctrl-wrapper.enabled {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* ── PRESETS ── */
+        .preset-row {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+        }
+        .preset-dot {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1.5px solid rgba(255,255,255,0.1);
+            transition: all 0.2s;
+            position: relative;
+        }
+        .preset-dot:hover {
+            transform: scale(1.35);
+            border-color: rgba(255,255,255,0.5);
+        }
+        .preset-dot::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            border: 1px solid currentColor;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .preset-dot:hover::after { opacity: 0.3; }
+
+        /* ── COLOR WHEEL ── */
+        .wheel-center {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* ── ON/OFF BUTTONS ── */
+        .onoff-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .btn-power {
+            padding: 7px;
+            border-radius: 8px;
+            border: 1px solid;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .btn-on {
+            border-color: rgba(105, 240, 174, 0.25);
+            background: rgba(105, 240, 174, 0.07);
+            color: var(--success);
+        }
+        .btn-on:hover {
+            border-color: rgba(105, 240, 174, 0.5);
+            background: rgba(105, 240, 174, 0.14);
+            transform: translateY(-1px);
+        }
+        .btn-off {
+            border-color: rgba(255, 82, 82, 0.2);
+            background: rgba(255, 82, 82, 0.05);
+            color: var(--danger);
+        }
+        .btn-off:hover {
+            border-color: rgba(255, 82, 82, 0.4);
+            background: rgba(255, 82, 82, 0.12);
+            transform: translateY(-1px);
+        }
+
+        /* ── MUSIC BAR ── */
+        .music-bar {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 9px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-music {
+            flex-shrink: 0;
+            padding: 5px 14px;
+            border-radius: 6px;
+            border: 1px solid rgba(240, 98, 146, 0.25);
+            background: rgba(240, 98, 146, 0.07);
+            color: var(--music);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-music:hover {
+            background: rgba(240, 98, 146, 0.14);
+            border-color: rgba(240, 98, 146, 0.5);
+        }
+        .btn-music.active {
+            background: rgba(240, 98, 146, 0.2);
+            border-color: rgba(240, 98, 146, 0.6);
+            animation: pulse-music 1.2s ease-in-out infinite;
+        }
+        @keyframes pulse-music {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(240, 98, 146, 0.3); }
+            50% { box-shadow: 0 0 0 8px rgba(240, 98, 146, 0); }
+        }
+
+        .audio-track {
+            flex: 1;
+            height: 4px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .audio-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--music), #ff80ab);
+            border-radius: 2px;
+            transition: width 0.05s;
+        }
+
+        /* ── SCROLLBAR SUPPRESS ── */
+        ::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <div class="header-bar">
+        <div class="header-left">
+            <div class="logo-dot"></div>
+            <span class="app-title">Sandy LED Controller</span>
+        </div>
+        <button class="btn-close-custom" onclick="hideApp()" title="Sembunyikan ke Tray">✕</button>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-content">
+
+        <!-- ALL CONTROL -->
+        <div class="all-control-bar">
+            <button class="btn-all" onclick="sendAll('ON')">
+                <svg class="btn-all-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/>
+                    <path d="M8 5v3.5l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                ALL ON
+            </button>
+            <button class="btn-all all-off" onclick="sendAll('OFF')">
+                <svg class="btn-all-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5.5 3.5A5.5 5.5 0 1 0 12.5 10.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                    <path d="M8 2v6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+                ALL OFF
+            </button>
+        </div>
+
+        <!-- DEVICE CARDS -->
+        <div class="devices-row">
+
+            <!-- CARD 1: LEDBLE -->
+            <div class="device-card card-1" id="card1">
+                <div class="card-header-row">
+                    <div>
+                        <div class="device-name">LEDBLE</div>
+                        <div class="device-sub">Tanguixing</div>
+                    </div>
+                    <div class="status-pill" id="status1">
+                        <div class="status-dot-inner"></div>
+                        IDLE
+                    </div>
+                </div>
+
+                <button class="btn-connect" onclick="connectLed1()">⬡ Connect</button>
+
+                <div class="ctrl-wrapper" id="ctrl1">
+                    <div class="preset-row">
+                        <div class="preset-dot" style="background:#FFFFFF;" onclick="setPreset1('#FFFFFF')"></div>
+                        <div class="preset-dot" style="background:#FF3B30;" onclick="setPreset1('#FF3B30')"></div>
+                        <div class="preset-dot" style="background:#30D158;" onclick="setPreset1('#30D158')"></div>
+                        <div class="preset-dot" style="background:#0A84FF;" onclick="setPreset1('#0A84FF')"></div>
+                        <div class="preset-dot" style="background:#FFD60A;" onclick="setPreset1('#FFD60A')"></div>
+                        <div class="preset-dot" style="background:#BF5AF2;" onclick="setPreset1('#BF5AF2')"></div>
+                    </div>
+                    <div class="wheel-center" id="wheel1"></div>
+                    <div class="onoff-row">
+                        <button class="btn-power btn-on" onclick="send1('ON')">ON</button>
+                        <button class="btn-power btn-off" onclick="send1('OFF')">OFF</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 2: BJ_LED -->
+            <div class="device-card card-2" id="card2">
+                <div class="card-header-row">
+                    <div>
+                        <div class="device-name">BJ_LED</div>
+                        <div class="device-sub">Mohuan</div>
+                    </div>
+                    <div class="status-pill" id="status2">
+                        <div class="status-dot-inner"></div>
+                        IDLE
+                    </div>
+                </div>
+
+                <button class="btn-connect" onclick="connectLed2()">⬡ Connect</button>
+
+                <div class="ctrl-wrapper" id="ctrl2">
+                    <div class="preset-row">
+                        <div class="preset-dot" style="background:#FFFFFF;" onclick="setPreset2('#FFFFFF')"></div>
+                        <div class="preset-dot" style="background:#FF3B30;" onclick="setPreset2('#FF3B30')"></div>
+                        <div class="preset-dot" style="background:#30D158;" onclick="setPreset2('#30D158')"></div>
+                        <div class="preset-dot" style="background:#0A84FF;" onclick="setPreset2('#0A84FF')"></div>
+                        <div class="preset-dot" style="background:#FFD60A;" onclick="setPreset2('#FFD60A')"></div>
+                        <div class="preset-dot" style="background:#BF5AF2;" onclick="setPreset2('#BF5AF2')"></div>
+                    </div>
+                    <div class="wheel-center" id="wheel2"></div>
+                    <div class="onoff-row">
+                        <button class="btn-power btn-on" onclick="send2('ON')">ON</button>
+                        <button class="btn-power btn-off" onclick="send2('OFF')">OFF</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- MUSIC SYNC -->
+        <div class="music-bar">
+            <button id="btnMusic" class="btn-music" onclick="toggleMusicMode()">🎤 MUSIC SYNC</button>
+            <div class="audio-track">
+                <div id="audioFill" class="audio-fill"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+        function hideApp() { ipcRenderer.send('hide-window'); }
+
+        // ── MEMORY ──
+        const savedColor1 = localStorage.getItem('lastColor_LEDBLE') || "#4fc3f7";
+        const savedColor2 = localStorage.getItem('lastColor_BJLED') || "#e040fb";
+
+        // ── IRO.JS ──
+        const pickerCfg = {
+            width: 120,
+            layout: [
+                { component: iro.ui.Wheel },
+                { component: iro.ui.Slider, options: { sliderType: 'value' } }
+            ]
+        };
+        var colorPicker1 = new iro.ColorPicker("#wheel1", { ...pickerCfg, color: savedColor1 });
+        var colorPicker2 = new iro.ColorPicker("#wheel2", { ...pickerCfg, color: savedColor2 });
+
+        // ── PRESETS ──
+        function setPreset1(hex) { colorPicker1.color.hexString = hex; updateColor1(hex); localStorage.setItem('lastColor_LEDBLE', hex); }
+        function setPreset2(hex) { colorPicker2.color.hexString = hex; updateColor2(hex); localStorage.setItem('lastColor_BJLED', hex); }
+
+        // ── THROTTLE ──
+        let lastTime = 0; const DELAY = 100;
+        colorPicker1.on('input:change', (c) => { if (Date.now() - lastTime > DELAY) { updateColor1(c.hexString); lastTime = Date.now(); } });
+        colorPicker1.on('input:end', (c) => { localStorage.setItem('lastColor_LEDBLE', c.hexString); });
+        colorPicker2.on('input:change', (c) => { if (Date.now() - lastTime > DELAY) { updateColor2(c.hexString); lastTime = Date.now(); } });
+        colorPicker2.on('input:end', (c) => { localStorage.setItem('lastColor_BJLED', c.hexString); });
+
+        // ── ALL CONTROL ──
+        function sendAll(cmd) {
+            send1(cmd);
+            send2(cmd);
+        }
+
+        // ── MUSIC MODE ──
+        let isMusicMode = false;
+        let audioContext, analyser, microphone, javascriptNode;
+        let lastBeatTime = 0;
+
+        async function toggleMusicMode() {
+            const btn = document.getElementById('btnMusic');
+            if (!isMusicMode) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    audioContext = new AudioContext();
+                    analyser = audioContext.createAnalyser();
+                    microphone = audioContext.createMediaStreamSource(stream);
+                    javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
+                    analyser.smoothingTimeConstant = 0.5;
+                    analyser.fftSize = 1024;
+                    microphone.connect(analyser);
+                    analyser.connect(javascriptNode);
+                    javascriptNode.connect(audioContext.destination);
+                    javascriptNode.onaudioprocess = function () {
+                        if (!isMusicMode) return;
+                        var array = new Uint8Array(analyser.frequencyBinCount);
+                        analyser.getByteFrequencyData(array);
+                        var values = 0;
+                        for (var i = 0; i < array.length; i++) values += array[i];
+                        var avg = values / array.length;
+                        document.getElementById('audioFill').style.width = Math.min(avg * 2, 100) + "%";
+                        if (avg > 40 && (Date.now() - lastBeatTime > 150)) {
+                            triggerBeat();
+                            lastBeatTime = Date.now();
+                        }
+                    };
+                    isMusicMode = true;
+                    btn.innerText = "🛑 STOP SYNC";
+                    btn.classList.add('active');
+                } catch (e) { alert("Gagal akses Microphone!"); }
+            } else {
+                isMusicMode = false;
+                if (audioContext) audioContext.close();
+                btn.innerText = "🎤 MUSIC SYNC";
+                btn.classList.remove('active');
+                document.getElementById('audioFill').style.width = "0%";
+            }
+        }
+
+        function triggerBeat() {
+            const c = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+            updateColor1(c);
+            updateColor2(c);
+        }
+
+        // ── BLUETOOTH ──
+        const UUID_SVC_1 = "0000ffe0-0000-1000-8000-00805f9b34fb";
+        const UUID_CHR_1 = "0000ffe1-0000-1000-8000-00805f9b34fb";
+        let char1 = null;
+
+        const UUID_SVC_2 = "0000eea0-0000-1000-8000-00805f9b34fb";
+        const UUID_CHR_2 = "0000ee01-0000-1000-8000-00805f9b34fb";
+        let char2 = null;
+
+        // Terima perintah dari tray
+        ipcRenderer.on('tray-command', (e, t, a) => {
+            if (t === 'LEDBLE') send1(a);
+            if (t === 'BJ_LED') send2(a);
+            if (t === 'ALL') sendAll(a);
+        });
+
+        function setConnected(n) {
+            const pill = document.getElementById('status' + n);
+            pill.innerHTML = '<div class="status-dot-inner"></div> ON';
+            pill.classList.add('connected');
+            const ctrl = document.getElementById('ctrl' + n);
+            ctrl.classList.add('enabled');
+            document.getElementById('card' + n).classList.add('connected-card');
+        }
+
+        async function connectLed1() {
+            ipcRenderer.send('target-bluetooth', 'LEDBLE');
+            try {
+                const device = await navigator.bluetooth.requestDevice({ filters: [{ namePrefix: 'LED' }], optionalServices: [UUID_SVC_1] });
+                const server = await device.gatt.connect();
+                const service = await server.getPrimaryService(UUID_SVC_1);
+                char1 = await service.getCharacteristic(UUID_CHR_1);
+                await char1.writeValue(new Uint8Array([0x7E, 0xFF, 0x09, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0xEF]));
+                setConnected(1);
+            } catch (error) { console.log(error); }
+        }
+
+        async function connectLed2() {
+            ipcRenderer.send('target-bluetooth', 'BJ_LED');
+            try {
+                const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: [UUID_SVC_2] });
+                const server = await device.gatt.connect();
+                const service = await server.getPrimaryService(UUID_SVC_2);
+                char2 = await service.getCharacteristic(UUID_CHR_2);
+                setConnected(2);
+                const memColor = colorPicker2.color.hexString;
+                setTimeout(() => updateColor2(memColor), 500);
+            } catch (error) { console.log(error); }
+        }
+
+        function hexToRgb(hex) {
+            const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return r ? [parseInt(r[1], 16), parseInt(r[2], 16), parseInt(r[3], 16)] : [0, 0, 0];
+        }
+
+        async function send1(cmd) {
+            if (!char1) return;
+            const data = (cmd === 'ON')
+                ? [0x7E, 0xFF, 0x04, 0x01, 0x00, 0xFF, 0xFF, 0x01, 0xEF]
+                : [0x7E, 0xFF, 0x04, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0xEF];
+            try { await char1.writeValue(new Uint8Array(data)); } catch (e) {}
+        }
+
+        async function updateColor1(hex) {
+            if (!char1) return;
+            const [r, g, b] = hexToRgb(hex);
+            try { await char1.writeValue(new Uint8Array([0x7E, 0xFF, 0x05, 0x03, r, g, b, 0x00, 0xEF])); } catch (e) {}
+        }
+
+        async function send2(cmd) {
+            if (!char2) return;
+            const data = (cmd === 'ON')
+                ? [0x69, 0x96, 0x06, 0x01, 0x01, 0xFF, 0xFF, 0xFF, 0x7F]
+                : [0x69, 0x96, 0x02, 0x01, 0x00];
+            try { await char2.writeValueWithoutResponse(new Uint8Array(data)); } catch (e) {}
+            if (cmd === 'ON') {
+                const memColor = colorPicker2.color.hexString;
+                setTimeout(() => updateColor2(memColor), 300);
+            }
+        }
+
+        async function updateColor2(hex) {
+            if (!char2) return;
+            const [r, g, b] = hexToRgb(hex);
+            try { await char2.writeValueWithoutResponse(new Uint8Array([0x69, 0x96, 0x05, 0x02, r, g, b, 0x7F])); } catch (e) {}
+        }
+    </script>
+</body>
+</html>

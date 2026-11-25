@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c0c14;
+            --surface: #111120;
+            --border: rgba(255,255,255,0.07);
+            --text: #d4d8f0;
+            --text-muted: rgba(212, 216, 240, 0.35);
+            --accent-1: #4fc3f7;
+            --accent-2: #e040fb;
+            --accent-all: #f9a825;
+            --success: #69f0ae;
+            --danger: #ff5252;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            overflow: hidden;
+            -webkit-user-select: none;
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+        }
+
+        /* Subtle glow top */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -40px; left: 50%;
+            transform: translateX(-50%);
+            width: 200px; height: 80px;
+            background: radial-gradient(ellipse, rgba(79, 195, 247, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .wrap { padding: 10px 8px; display: flex; flex-direction: column; gap: 4px; }
+
+        /* Header strip */
+        .tray-header {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 6px 8px 10px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2px;
+        }
+        .tray-dot {
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: var(--accent-1);
+            box-shadow: 0 0 6px var(--accent-1);
+        }
+        .tray-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+        }
+
+        /* Section label */
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            padding: 4px 8px 2px;
+            text-transform: uppercase;
+        }
+
+        /* Control row: two buttons side by side */
+        .btn-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+            padding: 0 2px;
+        }
+
+        .btn-cmd {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 7px 6px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-muted);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            cursor: pointer;
+            transition: all 0.18s;
+            text-align: center;
+        }
+        .btn-cmd:hover { color: var(--text); border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); }
+
+        .btn-cmd.on-btn:hover {
+            border-color: rgba(105, 240, 174, 0.4);
+            background: rgba(105, 240, 174, 0.08);
+            color: var(--success);
+        }
+        .btn-cmd.off-btn:hover {
+            border-color: rgba(255, 82, 82, 0.35);
+            background: rgba(255, 82, 82, 0.07);
+            color: var(--danger);
+        }
+
+        .indicator {
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.4;
+            flex-shrink: 0;
+        }
+
+        /* Device accent colors */
+        .label-1 { color: var(--accent-1); }
+        .label-2 { color: var(--accent-2); }
+        .label-all { color: var(--accent-all); }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 6px;
+        }
+
+        /* ALL buttons - special */
+        .all-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+            padding: 0 2px;
+        }
+
+        .btn-all-cmd {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 8px 6px;
+            border-radius: 8px;
+            border: 1px solid rgba(249, 168, 37, 0.15);
+            background: rgba(249, 168, 37, 0.05);
+            color: rgba(249, 168, 37, 0.6);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+        .btn-all-cmd:hover {
+            border-color: rgba(249, 168, 37, 0.4);
+            background: rgba(249, 168, 37, 0.1);
+            color: var(--accent-all);
+        }
+        .btn-all-cmd.all-off-cmd {
+            border-color: rgba(255, 82, 82, 0.12);
+            background: rgba(255, 82, 82, 0.04);
+            color: rgba(255, 82, 82, 0.5);
+        }
+        .btn-all-cmd.all-off-cmd:hover {
+            border-color: rgba(255, 82, 82, 0.35);
+            background: rgba(255, 82, 82, 0.09);
+            color: var(--danger);
+        }
+
+        /* Footer buttons */
+        .btn-footer {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 10px;
+            border-radius: 8px;
+            border: none;
+            background: none;
+            color: var(--text-muted);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            transition: all 0.18s;
+            width: 100%;
+            text-align: left;
+        }
+        .btn-footer:hover {
+            background: var(--surface);
+            color: var(--text);
+        }
+        .btn-footer.danger:hover {
+            background: rgba(255, 82, 82, 0.08);
+            color: var(--danger);
+        }
+
+        .footer-icon {
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .badge-new {
+            margin-left: auto;
+            font-size: 8px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.06);
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+
+    <!-- Header -->
+    <div class="tray-header">
+        <div class="tray-dot"></div>
+        <span class="tray-title">SANDY LED</span>
+    </div>
+
+    <!-- ALL CONTROL -->
+    <span class="section-label label-all">All Devices</span>
+    <div class="all-row">
+        <button class="btn-all-cmd" onclick="sendCommand('ALL', 'ON')">
+            ⚡ ALL ON
+        </button>
+        <button class="btn-all-cmd all-off-cmd" onclick="sendCommand('ALL', 'OFF')">
+            ⏻ ALL OFF
+        </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- LEDBLE -->
+    <span class="section-label label-1">LEDBLE — Tanguixing</span>
+    <div class="btn-row">
+        <button class="btn-cmd on-btn" onclick="sendCommand('LEDBLE', 'ON')">
+            <span class="indicator"></span> ON
+        </button>
+        <button class="btn-cmd off-btn" onclick="sendCommand('LEDBLE', 'OFF')">
+            <span class="indicator"></span> OFF
+        </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- BJ_LED -->
+    <span class="section-label label-2">BJ_LED — Mohuan</span>
+    <div class="btn-row">
+        <button class="btn-cmd on-btn" onclick="sendCommand('BJ_LED', 'ON')">
+            <span class="indicator"></span> ON
+        </button>
+        <button class="btn-cmd off-btn" onclick="sendCommand('BJ_LED', 'OFF')">
+            <span class="indicator"></span> OFF
+        </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Footer -->
+    <button class="btn-footer" onclick="openMain()">
+        <span class="footer-icon">🎨</span>
+        Buka Dashboard
+        <span class="badge-new">⤢</span>
+    </button>
+    <button class="btn-footer danger" onclick="closeApp()">
+        <span class="footer-icon">⏼</span>
+        Exit App
+    </button>
+
+</div>
+
+<script>
+    const { ipcRenderer } = require('electron');
+
+    function sendCommand(target, action) {
+        ipcRenderer.send('relay-command', { target, action });
+    }
+
+    function openMain() {
+        ipcRenderer.send('open-dashboard');
+    }
+
+    function closeApp() {
+        ipcRenderer.send('quit-app');
+    }
+</script>
+</body>
+</html>
