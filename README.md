@@ -2,6 +2,10 @@
 
 Aplikasi desktop ringan untuk Windows berbasis **Electron** yang berfungsi mengontrol dua modul **Bluetooth Low Energy (BLE) LED Strip** secara terpisah maupun bersamaan langsung dari **Windows System Tray**.
 
+## Tampilan Antarmuka
+
+![Tampilan Antarmuka Sandy LED Controller](docs/interface.png)
+
 ## Perangkat yang Didukung
 
 - **LEDBLE (Tanguixing)** — Menggunakan BLE Service UUID `0xFFE0` & Characteristic `0xFFE1` (protokol header `0x7E ... 0xEF`).
@@ -9,7 +13,8 @@ Aplikasi desktop ringan untuk Windows berbasis **Electron** yang berfungsi mengo
 
 ## Fitur Utama
 
-- **Dual Device & Master Control**: Kontrol daya (`ON` / `OFF`) dan warna untuk masing-masing LED strip secara independen maupun serentak (`ALL ON` / `ALL OFF`).
+- **Dual Device & Master Control**: Kontrol koneksi (`CONNECT` / `DISCONNECT`), daya (`ON` / `OFF`), dan warna untuk masing-masing LED strip secara independen maupun serentak (`CONNECT ALL`, `ALL ON`, `ALL OFF`).
+- **Pengaturan Jadwal Otomatis**: Penjadwalan waktu nyala (`ON`) dan mati (`OFF`) secara otomatis berdasarkan hari tertentu maupun setiap hari untuk seluruh perangkat atau strip tertentu.
 - **Windows System Tray Integration**:
   - **Klik Kiri** pada ikon tray untuk membuka/menutup jendela dasbor utama (*auto-hide* saat kehilangan fokus).
   - **Klik Kanan** pada ikon tray untuk membuka menu kontrol cepat tanpa perlu membuka dasbor penuh.
@@ -22,6 +27,20 @@ Aplikasi desktop ringan untuk Windows berbasis **Electron** yang berfungsi mengo
 - **Runtime & Framework**: Node.js, Electron (`v40.2.1`)
 - **Hardware Communication**: Web Bluetooth API (GATT)
 - **Frontend & UI**: HTML5, CSS3, Bootstrap 5, `iro.js` Color Picker, Web Audio API
+
+## Struktur Proyek
+
+```text
+led-strip-control/
+├── docs/
+│   └── interface.png        # Tampilan dasbor utama aplikasi
+├── index.html               # Antarmuka jendela kontrol utama
+├── tray.html                # Menu kontrol cepat System Tray
+├── main.js                  # Proses utama Electron & manajemen tray
+├── icon.png                 # Ikon aplikasi
+├── package.json
+└── package-lock.json
+```
 
 ## Instalasi & Menjalankan dari Source Code
 
